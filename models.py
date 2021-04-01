@@ -1,56 +1,66 @@
-from datetime import datetime
-from app import db
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-class Users(db.Model):
+
+
+
+Base = declarative_base()
+
+
+class Users(Base):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
-    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    role = db.Column(db.String())
-    search_history_id = db.Column(db.Integer, db.ForeignKey('search_result.id'))
-    search_result = db.relationship(Search_result)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(64), index=True, unique=True)
+    email = Column(String(120), index=True, unique=True)
+    password_hash = Column(String(128))
+    created_at = Column(DateTime, index=True)
+    role = Column(String())
+    search_history_id = Column(Integer, ForeignKey('search_result.id'))
+    # search_result = relationship(Search_result)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-class Product(db.Model):
+class Product(Base):
     __tablename__ = 'product'
-    id = db.Column(db.Integer, primary_key=True)
-    category=db.Column(db.String(200),index=True, unique=True)
-    price=db.Column(db.Integer)
-    status=db.Column(db.String(200), index=True, unique=True)
-    created_at=db.Column(db.DateTime,index=True, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    category=Column(String(200),index=True, unique=True)
+    price=Column(Integer)
+    status=Column(String(200), index=True, unique=True)
+    created_at=Column(DateTime,index=True)
 
 
 products_category = Table(
     "products_category",
     Base.metadata,
-    Column("product_id,", Integer, ForeignKey("Product.product_id")),
-    Column("category_id", Integer, ForeignKey("Category.category_id"))
+    Column("product_id,", Integer, ForeignKey("product.id")),
+    Column("category_id", Integer, ForeignKey("category.id"))
 )
 
-class Category(db.Model):
+class Category(Base):
     __tablename__ = 'category'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
-    products_id = db.Column(db.String, db.ForeignKey('product.id'))
+    id = Column(Integer, primary_key=True)
+    name = Column(String())
+    products_id = Column(String, ForeignKey('product.id'))
 
-class Search_result(db.Model):
+
+
+class Search_result(Base):
     __tablename__ = 'search_result'
-    id = db.Column(db.Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
 
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    category = db.relationship(Category)
+    category_id = Column(Integer, ForeignKey('category.id'))
+    # category = relationship(Category)
 
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
-    product_names = db.Column(db.String(200), index=True, unique=True)
-    keywords = db.Column(db.String(200), index=True, unique=False)
-    created_at=db.Column(db.DateTime,index=True, default=datetime.utcnow)
+    product_id = Column(Integer, ForeignKey('product.id'))
+    product_names = Column(String(200), index=True, unique=True)
+    keywords = Column(String(200), index=True, unique=False)
+    created_at=Column(DateTime,index=True)
 
-
-engine = create_engine('sqlite:///../data/ecoswap_database.sqlite')
+engine = create_engine('sqlite:///./ecoswap_database.sqlite')
 
 session = sessionmaker()
 
