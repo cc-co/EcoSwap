@@ -3,9 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-
-
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -16,10 +14,10 @@ class Users(Base):
     username = Column(String(64), index=True, unique=True)
     email = Column(String(120), index=True, unique=True)
     password_hash = Column(String(128))
-    created_at = Column(DateTime, index=True)
+    created_at = Column(DateTime, index=True, default=datetime.utcnow)
     role = Column(String())
     search_history_id = Column(Integer, ForeignKey('search_result.id'))
-    # search_result = relationship(Search_result)
+    search_result = relationship('Search_result', backref='product', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -30,15 +28,15 @@ class Product(Base):
     category=Column(String(200),index=True, unique=True)
     price=Column(Integer)
     status=Column(String(200), index=True, unique=True)
-    created_at=Column(DateTime,index=True)
+    created_at=Column(DateTime,index=True, default=datetime.utcnow)
 
-
-products_category = Table(
-    "products_category",
-    Base.metadata,
-    Column("product_id,", Integer, ForeignKey("product.id")),
-    Column("category_id", Integer, ForeignKey("category.id"))
-)
+# #Association table for "Many to many relationship" between products and categories
+# products_category = Table(
+#     "products_category",
+#     Base.metadata,
+#     Column("product_id,", Integer, ForeignKey("product.id")),
+#     Column("category_id", Integer, ForeignKey("category.id"))
+# )
 
 class Category(Base):
     __tablename__ = 'category'
@@ -53,12 +51,14 @@ class Search_result(Base):
     id = Column(Integer, primary_key=True)
 
     category_id = Column(Integer, ForeignKey('category.id'))
-    # category = relationship(Category)
+    category = relationship('Category', backref='category', lazy=True)
 
     product_id = Column(Integer, ForeignKey('product.id'))
     product_names = Column(String(200), index=True, unique=True)
+    products = relationship('Product', backref='product', lazy=True)
+
     keywords = Column(String(200), index=True, unique=False)
-    created_at=Column(DateTime,index=True)
+    created_at=Column(DateTime,index=True, default=datetime.utcnow)
 
 engine = create_engine('sqlite:///./ecoswap_database.sqlite')
 

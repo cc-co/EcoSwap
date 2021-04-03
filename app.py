@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../data/books_and_authors.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./ecoswap_database.sqlite'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
