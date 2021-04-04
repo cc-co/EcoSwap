@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}All products{% endblock %}
+
+{% block body %}
+    <h1>Some products</h1>
+    <table>
+        {% for category in categories %}
+            <tr>
+                <td colspan="3">
+                    {{ category.name }}
+                </td>
+            </tr>
+            {% for product in products_by_category[category] %}
+                <tr><td>---</td>
+                    <td>
+                        {{ product.name}} ${{product.price}}
+                    </td>
+                    <td>
+                        {% if product.product_des %}
+                            {{ product.product_des}}
+                        {% else %}
+                            No description yet
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+{% endblock %}

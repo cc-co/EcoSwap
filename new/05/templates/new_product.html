@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Add a new product</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.category.label }}<br>
+            {{ form.category(size=32) }}
+            {% for error in form.category.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(size=32) }}
+            {% for error in form.name.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.product_des.label }}<br>
+            {{ form.product_des(size=32) }}
+            {% for error in form.product_des.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
