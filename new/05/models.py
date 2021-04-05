@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from app import login
+from datetime import datetime
 
 class Category(db.Model):
     __tablename__ = 'category'
@@ -15,7 +16,7 @@ class Category(db.Model):
 
 class Product(db.Model):
     __tablename__ = 'product'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     name = db.Column(db.String)
     price = db.Column(db.Integer)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
@@ -37,10 +38,11 @@ class Product(db.Model):
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True,unique=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    search_results = db.relationship('Search_result', lazy="dynamic")
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -54,3 +56,14 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+class Search_result(db.Model):
+    __tablename__ = 'search_result'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    category = db.relationship(Category)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    product_names = db.Column(db.String(200), index=True, unique=True)
+    keywords = db.Column(db.String(200), index=True, unique=False)
+    created_at=db.Column(db.DateTime,index=True, default=datetime.utcnow)

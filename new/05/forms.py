@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, PasswordField, BooleanField
+from wtforms import StringField, SubmitField, IntegerField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, EqualTo, Email
 
 
@@ -9,8 +9,11 @@ class NewCategoryForm(FlaskForm):
 
 class NewProductForm(FlaskForm):
     category = StringField('Category', validators=[DataRequired()])
+    # select=SelectField('Search for Categories', categories=categories)
+    # search=StringField('')
     name = StringField('Name', validators=[DataRequired()])
     product_des = StringField('Product description', validators=[DataRequired()])
+    price = IntegerField('Price', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class NewUserForm(FlaskForm):

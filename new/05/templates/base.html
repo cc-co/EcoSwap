@@ -15,12 +15,13 @@
                 <li><a href="/products_for_category">Products for a category</a></li>
                 <li><a href="/register">Register</a></li>
                 <li><a href="/login">Login</a></li>
+                <li><a href="/logout">Logout</a></li>
             </ul>
         </div>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <hr>
-                <ul>
+                <ul id = "warning">
                     {% for message in messages %}
                         <li>{{ message }}</li>
                     {% endfor %}

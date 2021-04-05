@@ -76,16 +76,27 @@ def newuser():
     form=NewUserForm()
     if not form.validate_on_submit():
         return render_template('new_user.html', form=form)
+
+    username = form.username.data.strip()
+    email = form.email.data.strip()
     
+    if User.query.filter(User.username == username).count():
+        flash(f'Error: {username} user already exists')
+        return render_template('new_user.html', form=form)
+
+    if User.query.filter(User.email == email).count():
+        flash(f'Error: {email} user email address already exists')
+        return render_template('new_user.html', form=form)
+
     user = User(username=form.username.data, email=form.email.data)
     user.set_password(form.password.data)
     db.session.add(user)
     db.session.commit()
     flash(f'New user {form.username.data} registered')
-    return redirect(url_for('login'))
+    return redirect('/login')
 
 @app.route('/products')
-def list_books():
+def list_products():
     products_by_category = {
         category: Product.query.filter(Product.category == category)
         for category in Category.query.all()
@@ -93,7 +104,7 @@ def list_books():
     return render_template('products.html', categories=Category.query.all(), products_by_category=products_by_category)
 
 @app.route('/new_category', methods=['GET', 'POST'])
-def new_author():
+def new_category():
     form = NewCategoryForm()
     if not form.validate_on_submit():
         return render_template('new_category.html', form=form)
@@ -118,26 +129,31 @@ def new_product():
 
     category = form.category.data.strip()
     name = form.name.data.strip()
+    price =int(form.price.data)
     product_des = form.product_des.data.strip()
 
     if Product.query.filter(Product.name == name).count():
         flash(f'Error: {name} already exists')
         return render_template('new_product.html', form=form)
 
+    prod_cat = Category.query.filter(Category.name == category).first()
+
     if not Category.query.filter(Category.name == category).count():
         flash(f'Error: {name} needs existing category {category}')
         return render_template('new_product.html', form=form)
 
-    product = Product(category=category, name=name, product_des=product_des)
+    product = Product(category=prod_cat, name=name, product_des=product_des, price=price)
     db.session.add(product)
     db.session.commit()
     flash(f'New product {name} created')
     return redirect('/products')
 
 
-
-
-
 @app.route('/products_for_category')
 def products_for_category():
     return render_template('products_for_category.html', categories=Category.query.all())
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
