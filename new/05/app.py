@@ -1,10 +1,11 @@
-from flask import Flask, render_template, flash, redirect
+from flask import Flask, render_template, flash, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate                   # albemic
 from flask_admin import Admin                       # admin
 from flask_admin.contrib.sqla import ModelView      # admin
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 
-from forms import NewCategoryForm, NewProductForm
+from forms import NewCategoryForm, NewProductForm, NewUserForm, LoginForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../data/ecoswap_database.sqlite'
@@ -15,14 +16,17 @@ app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'                   # theme of admin
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)                          # albemic
+login = LoginManager(app)
+login.login_view = 'login'
 
-from models import Category, Product
+from models import Category, Product, User
 from api import api                            # api
 app.register_blueprint(api, url_prefix='/api')                  # api
 
 admin = Admin(app, name='Ecoswap', template_mode='bootstrap3')    # admin, not pretty because causes dependencies
 admin.add_view(ModelView(Category, db.session))                   # admin
 admin.add_view(ModelView(Product, db.session))                    # admin
+admin.add_view(ModelView(User, db.session))
 
 @app.route('/one_category')
 def hello_world():
@@ -34,6 +38,51 @@ def hello_world():
 def index():
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if not form.validate_on_submit():
+        return render_template('login.html', form=form)
+
+    user = User.query.filter_by(username=form.username.data).first()
+    if user is None or not user.check_password(form.password.data):
+        flash('Invalid username or password')
+        return redirect(url_for('login'))
+
+    login_user(user)
+    return redirect(url_for('index'))
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#    form = LoginForm()
+#    if not form.validate_on_submit():
+#      return render_template('login.html', form=form)
+
+#    redir = request.args.get('next')
+#   user = User.query.filter_by(username=form.username.data).first()
+#   if user is None or not user.check_password(form.password.data):
+#        flash('Invalid username or password')
+#        if redir:
+#            return redirect(url_for(redir[1:]))
+#        return redirect(url_for('login'))
+
+#     login_user(user)
+#     if redir:
+#         return redirect(url_for(redir[1:]))
+#     return redirect(url_for('index'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def newuser():
+    form=NewUserForm()
+    if not form.validate_on_submit():
+        return render_template('new_user.html', form=form)
+    
+    user = User(username=form.username.data, email=form.email.data)
+    user.set_password(form.password.data)
+    db.session.add(user)
+    db.session.commit()
+    flash(f'New user {form.username.data} registered')
+    return redirect(url_for('login'))
 
 @app.route('/products')
 def list_books():
@@ -84,6 +133,9 @@ def new_product():
     db.session.commit()
     flash(f'New product {name} created')
     return redirect('/products')
+
+
+
 
 
 @app.route('/products_for_category')
