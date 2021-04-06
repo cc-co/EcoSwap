@@ -4,6 +4,7 @@ from flask_migrate import Migrate                   # albemic
 from flask_admin import Admin                       # admin
 from flask_admin.contrib.sqla import ModelView      # admin
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
+import flask_whooshalchemy3 as wa
 
 from forms import NewCategoryForm, NewProductForm, NewUserForm, LoginForm
 
@@ -12,6 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../data/ecoswap_database.sqli
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'put some random string here'        # forms
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'                   # theme of admin pages
+app.config['WHOOSH_BASE']='whoosh'
 
 db = SQLAlchemy(app)
 
@@ -96,6 +98,7 @@ def newuser():
     return redirect('/login')
 
 @app.route('/products')
+@login_required
 def list_products():
     products_by_category = {
         category: Product.query.filter(Product.category == category)

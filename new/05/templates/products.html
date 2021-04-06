@@ -3,7 +3,7 @@
 {% block title %}All products{% endblock %}
 
 {% block body %}
-    <h1>Some products</h1>
+    <h1>All products</h1>
     <table>
         {% for category in categories %}
             <tr>
@@ -27,4 +27,10 @@
             {% endfor %}
         {% endfor %}
     </table>
+    <div>
+        <form class="example" action="/action_page.php">
+            <input type="text" placeholder="Search.." name="search">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+    </div>
 {% endblock %}

@@ -12,3 +12,11 @@
 #menu p {
         display: inline;
 }
+
+#warning ul {
+    color: red;
+}
+
+#warning li {
+    color: red;
+}
