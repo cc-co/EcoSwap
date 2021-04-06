@@ -1,0 +1,39 @@
+<html>
+    <header>
+        <title>Ecoswap - {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        {% block extra_header_contents %}{% endblock %}
+    </header>
+    <body>
+        <div id="menu">
+            <h1>Ecoswap</h1>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Complete Products list</a></li>
+                <li><a href="/new_product">Add a product</a></li>
+                <li><a href="/products_for_category">Products for a category</a></li>
+                {% if not current_user.is_authenticated %}
+                    <li><a href="/login">Log in</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% else %}
+                    <li><a href="/new_category">Add a category</a></li>
+                    <li><a href="/logout">Log out</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <hr>
+                <ul id = "warning">
+                    {% for message in messages %}
+                        <li id="warning">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        {% block body %}
+        {% endblock %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    </body>
+</html>

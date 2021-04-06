@@ -1,0 +1,22 @@
+#menu {
+    border: 1px solid lightgray;
+    padding: 5px;
+}
+
+#menu li {
+    list-style-type: none;
+    display: inline;
+    padding-right: 10em;
+}
+
+#menu p {
+        display: inline;
+}
+
+#warning ul {
+    color: red;
+}
+
+#warning li {
+    color: red;
+}

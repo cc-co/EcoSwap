@@ -1,0 +1,5 @@
+Groceries
+Toiletries
+Clothing
+Accessories
+Home Essentials

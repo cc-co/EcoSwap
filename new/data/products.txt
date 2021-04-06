@@ -1,0 +1,5 @@
+Groceries|Vegan burger|1
+Toiletries|Carbon-free Shampoo|2
+Clothing|Top made from recycled plastic|8
+Accessories|Ring made from plastic bags|5
+Home Essentials|Eco bag|3
