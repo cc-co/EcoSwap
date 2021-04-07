@@ -34,3 +34,7 @@ def search_query_product():
     
     products = Product.query.filter(Product.name.ilike(f"%{name}%")).all()
     return jsonify([product.as_dict() for product in products])
+
+# @api.route('/search')
+# def add_product():
+#     return jsonify
