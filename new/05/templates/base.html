@@ -20,6 +20,14 @@
                     <li><a href="/new_category">Add a category</a></li>
                     <li><a href="/logout">Log out</a></li>
                 {% endif %}
+                <li>
+                    <div>
+                    <form action="" method="post">
+                        <input type="text" placeholder="Search.." name="/api/search/name">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+                    </div>
+                </li>
             </ul>
         </div>
         {% with messages = get_flashed_messages() %}
@@ -34,6 +42,5 @@
         {% endwith %}
         {% block body %}
         {% endblock %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     </body>
 </html>

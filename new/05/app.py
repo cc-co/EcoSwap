@@ -4,7 +4,6 @@ from flask_migrate import Migrate                   # albemic
 from flask_admin import Admin                       # admin
 from flask_admin.contrib.sqla import ModelView      # admin
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-import flask_whooshalchemy3 as wa
 
 from forms import NewCategoryForm, NewProductForm, NewUserForm, LoginForm
 
