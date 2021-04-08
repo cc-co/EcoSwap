@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Products for category{% endblock %}
+
+{% block extra_header_contents %}
+    <!--<script src="{{ url_for('static', filename='products_for_category.js') }}"></script>-->
+{% endblock %}
+
+{% block body %}
+    <h1>Products by one category results</h1>
+
+    <form action='nproducts_for_category', method='POST'>
+        <select id="category_id" name='category_id'>
+            <option value="-1">Select a category</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+        </select>
+        <button type='submit'>Search again</button>
+    </form>
+
+    <br>
+    <ul>
+        {% for product in products%}
+        <li>{{product}}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

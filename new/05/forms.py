@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, PasswordField, BooleanField, SelectField
+from wtforms import StringField, SubmitField, IntegerField, PasswordField, BooleanField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Email
 
 
@@ -38,13 +38,32 @@ class UpdateProduct(FlaskForm):
     new_category=StringField('New category')
     new_prod_des=StringField('New description')
 
+    submit = SubmitField('Submit')
+
 # class UpdateCategoryForm(FlaskForm):
 #     name=StringField('Category')
 #     submit = SubmitField('Submit')
 
 class RemoveProduct(FlaskForm):
-    name=StringField('Product Name')
+    name=StringField('Product Name', validators=[DataRequired()])
     category=StringField('Category')
+    submit = SubmitField('Delete')
     
 class RemoveCategory(FlaskForm):
-    name=StringField('Category')
+    name=StringField('Category', validators=[DataRequired()])
+    submit = SubmitField('Delete')
+
+class RemoveUser(FlaskForm):
+    name=StringField('User', validators=[DataRequired()])
+    submit = SubmitField('Delete')
+
+
+#Form for posting blog entries by users
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+class RemovePost(FlaskForm):
+    title=StringField('Title', validators=[DataRequired()])
+    submit = SubmitField('Delete')
