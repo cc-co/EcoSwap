@@ -24,7 +24,7 @@ class Product(db.Model):
     product_des = db.Column(db.String)
 
     def __repr__(self):
-        return f'{self.name} by {self.category.name}'
+        return f'{self.name} : {self.category.name} : {self.product_des} : £{self.price} '
 
     def as_dict(self):
         return dict(
@@ -37,6 +37,7 @@ class Product(db.Model):
 
 
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True,unique=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -57,24 +58,25 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-class Search_result(db.Model):
-    __tablename__ = 'search_result'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    category = db.relationship(Category)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
-    query_result = db.Column(db.String(200), index=True, unique=True)
-    keywords = db.Column(db.String(200), index=True, unique=False)
-    created_at=db.Column(db.DateTime,index=True, default=datetime.utcnow)
+# class Search_result(db.Model):
+#     __tablename__ = 'search_result'
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+#     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+#     category = db.relationship(Category)
+#     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+#     query_result = db.Column(db.String(200), index=True, unique=True)
+#     keywords = db.Column(db.String(200), index=True, unique=False)
+#     created_at=db.Column(db.DateTime,index=True, default=datetime.utcnow)
 
 
-# class Post(db.Model):
-#     id=db.Column(db.Integer, primary_key=True)
-#     title=db.Column(db.String(100), index=True, unique=True)
-#     date_posted=db.Column(db.DateTime,index=True, default=datetime.utcnow)
-#     content=db.Column(db.Text, index=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id=db.Column(db.Integer, primary_key=True)
+    title=db.Column(db.String(100), index=True)
+    date_posted=db.Column(db.DateTime,index=True, default=datetime.utcnow)
+    content=db.Column(db.Text, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
-        # def __repr__(self):
-        # return f"Post('{self.title}', '{self.date_posted}')"
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
