@@ -20,3 +20,21 @@ def products_for_category():
 
     products = Product.query.filter(Product.category_id == category_id).all()
     return jsonify([product.as_dict() for product in products])
+
+@api.route('/search')
+def search_query_product():
+    try:
+        name = str(request.args.get('name'))
+        product = Product.query.filter(Product.name.ilike(f"%{name}%")).count()
+        if product<1:
+            raise Exception
+    except Exception as error:
+        print("Search Results do not exist")
+        abort(404)
+    
+    products = Product.query.filter(Product.name.ilike(f"%{name}%")).all()
+    return jsonify([product.as_dict() for product in products])
+
+# @api.route('/search')
+# def add_product():
+#     return jsonify

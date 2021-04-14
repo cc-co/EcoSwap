@@ -12,14 +12,23 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/products">Complete Products list</a></li>
                 <li><a href="/new_product">Add a product</a></li>
+                <li><a href="/new_post">Add a Post</a></li>
                 <li><a href="/products_for_category">Products for a category</a></li>
+                <li><a href="/nproducts_for_category">New Products for a category</a></li>
+                <li><a href="/delete_product">Delete Product</a></li>
+                <li><a href="/delete_category">Delete Category</a></li>
+                <li><a href="/delete_post">Delete Post</a></li>
+                <li><a href="/search">Search</a></li>
                 {% if not current_user.is_authenticated %}
                     <li><a href="/login">Log in</a></li>
                     <li><a href="/register">Register</a></li>
                 {% else %}
                     <li><a href="/new_category">Add a category</a></li>
+                    <li><a href="/delete_user">Delete user (Admin only tbc)</a></li>
                     <li><a href="/logout">Log out</a></li>
                 {% endif %}
+                <li>
+                </li>
             </ul>
         </div>
         {% with messages = get_flashed_messages() %}
@@ -34,6 +43,5 @@
         {% endwith %}
         {% block body %}
         {% endblock %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     </body>
 </html>

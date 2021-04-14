@@ -12,6 +12,8 @@ function show_new_product_list(products) {
     }
 }
 
+// This function generates results in HTML FROM THE API, GET put/shows items into <ul><li><li></ul>
+
 function update_product_list(category_id) {
     if (category_id < 0)
     {
@@ -33,6 +35,7 @@ function update_product_list(category_id) {
     }
 }
 
+//The read-only XMLHttpRequest property responseText returns the text received from a server following a request being sent.
 
 window.onload = (event) => {
     const dropdown = document.getElementById('category_id');
@@ -41,3 +44,5 @@ window.onload = (event) => {
         update_product_list(category_id);
     }
 };
+
+// making dropdown possible

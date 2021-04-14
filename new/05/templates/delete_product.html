@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Add a new product</h1>
-    <form action="" method="post" novalidate>
+    <h1>Delete a product</h1>
+    <form action="./delete_product" method="POST" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.category.label }}<br>
@@ -18,21 +18,8 @@
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>
-            {{ form.product_des.label }}<br>
-            {{ form.product_des(size=32) }}
-            {% for error in form.product_des.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.price.label }}<br>
-            {{ form.price(size=32) }}
-            {% for error in form.price.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
         <p>{{ form.submit() }}</p>
     </form>
+
 
 {% endblock %}
