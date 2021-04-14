@@ -2,4 +2,4 @@
 
 pip install -r requirements.txt
 
-# removed env
+# to run files, navigate to 05 folder
