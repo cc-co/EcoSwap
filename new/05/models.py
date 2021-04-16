@@ -36,8 +36,8 @@ class Product(db.Model):
         )
 
 
-class User(UserMixin, db.Model):
-    __tablename__ = 'user'
+class User(UserMixin, db.Model):                                        # UserMixin provides a common interface needed to implement with Flask-Login
+    __tablename__ = 'user'                                                              # can be used to check whether users are active
     id = db.Column(db.Integer, primary_key=True,unique=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)

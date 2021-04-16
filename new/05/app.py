@@ -1,40 +1,34 @@
 from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate                   # albemic
+from flask_migrate import Migrate                   # alembic
 from flask_admin import Admin                       # admin
 from flask_admin.contrib.sqla import ModelView      # admin
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 
-from forms import NewCategoryForm, NewProductForm, NewUserForm, PostForm, LoginForm, UpdateProduct, RemoveProduct, RemoveCategory, RemoveUser, RemovePost
+from forms import NewCategoryForm, NewProductForm, NewUserForm, PostForm, LoginForm, RemoveProduct, RemoveCategory, RemoveUser, RemovePost
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../data/ecoswap_database.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app = Flask(__name__)                                           # init app
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../data/ecoswap_database.sqlite'    # connecting to sqlite database
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False            # set false to stop warnings
 app.config['SECRET_KEY'] = 'random string'                      # forms
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'                   # theme of admin pages
 
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)                                            # init db, binding to app
 
-migrate = Migrate(app, db)                          # alembic
-login = LoginManager(app)
-login.login_view = 'login'
+migrate = Migrate(app, db)                                      # alembic
+login = LoginManager(app)                                       # Flask-Login needs to know the view function that handles logins
+login.login_view = 'login'                                      # 'login' is the function/endpoint for the login view
 
 from models import Category, Product, User, Post
-from api import api                            # api
+from api import api                                             # api
 app.register_blueprint(api, url_prefix='/api')                  # api
 
-admin = Admin(app, name='Ecoswap', template_mode='bootstrap3')    # admin, not pretty because causes dependencies
+admin = Admin(app, name='Ecoswap', template_mode='bootstrap3')    # admin
 admin.add_view(ModelView(Category, db.session))                   # admin
 admin.add_view(ModelView(Product, db.session))                    # admin
 admin.add_view(ModelView(User, db.session))                       # admin
 admin.add_view(ModelView(Post, db.session))                       # admin
-
-# @app.route('/one_category')
-# def hello_world():
-#     category = Category.query.first()
-#     return category.name
-
 
 ## HOMEPAGE FOR APP
 
@@ -87,11 +81,6 @@ def newuser():
     return redirect('/login')
 
 ## ******************* DELETING USERS - BACKEND ******************* ##
-@app.route('/users')
-def list_users():
-        for user in User.query.all():
-            print(user)
-        return "users :)"
 
 @app.route('/delete_user', methods=['GET','POST'])
 def remove_user():
@@ -110,8 +99,7 @@ def remove_user():
             flash(f'User "{name}" does not exist')
             return render_template('delete_user.html', form=form)
 
-        user = User.query.filter(User.username == name).first()       # finding the first thing that 
-
+        user = User.query.filter(User.username == name).first()               # finding the matching username
 
         db.session.delete(user)
         db.session.commit()
@@ -131,11 +119,7 @@ def list_products():
     }
     return render_template('products.html', categories=Category.query.all(), products_by_category=products_by_category)
 
-# reading all the products in a category/ GET FORM
-@app.route('/products_for_category')
-def products_for_category():
-    return render_template('products_for_category.html', categories=Category.query.all())
-
+# searching for products in a category
 @app.route('/nproducts_for_category', methods=['GET','POST'])
 def nproducts_for_category():
     if (request.method == 'GET'):
@@ -176,68 +160,6 @@ def new_product():
     flash(f'New product {name} created')
     return redirect('/products')
 
-@app.route('/new_product', methods = ['GET', 'POST'])
-def updateproduct():
-   form = UpdateProduct()
-   return render_template('products_for_category.html', categories=Category.query.all())
-
-
-#Updating the product
-@app.route('/new_product_update', methods=['PUT'])
-def update(): 
-
-    # FOR THE HTML FORM INPUT
-    # form = UpdateProduct()
-    # info the user wants updated (for the form)
-    # name = form.name.data.strip()
-    # category_id = int(form.category_id.data)
-    # price = int(form.price.data)
-    # product_des = form.product_des.data.strip()
-    
-    # FOR READING DATA THROUGH POSTMAN
-    # will have to read inputs in JSON
-    request_data = request.get_json() # to see if it works in postman
-    
-    name_to_search = None
-    name_to_update = None
-    category_to_update = None
-    price_to_update = None
-    product_des_to_update = None
-
-    #if the user has submitted all this to be updated
-    if request_data:
-      if 'existing_name' in request_data:
-          name_to_search = request_data['existing_name']
-
-      if 'name_to_update' in request_data:
-          name_to_update = request_data['name_to_update']
-
-      if 'price' in request_data:
-          price_to_update = int(request_data['price'])
-
-      if 'product_des' in request_data:
-          product_des_to_update = request_data['product_des']
-
-    #find the matching product ID
-    prod = db.session.query(Product).filter(Product.name == name_to_search)
-    try:
-        prod = prod.update(            # reassignment of updated product
-            {
-                "name": name_to_update,
-                "price": price_to_update,
-                "product_des": product_des_to_update
-            }, synchronize_session = False
-        )
-    except Exception as exc:
-        return(f"Error: {exc}")
-
-    # db.session.add(prod)
-    db.session.commit()
-    flash(f'Product {name_to_search} edited')
-
-    return(f'{prod}')
-    # return redirect('/products')
-
 
 # reading and creating new categories in the database
 @app.route('/new_category', methods=['GET', 'POST'])
@@ -256,25 +178,6 @@ def new_category():
     db.session.add(category)
     db.session.commit()
     flash(f'New category {name} created')
-    return redirect('/products')
-
-
-@app.route('/new_category_update', methods=['GET', 'PUT'])
-def category_update(id):
-    form = UpdateCategoryForm()
-
-    name = form.name.data.strip()
-
-    #updatedcategory = Category.query.filter(Category.name == name).one()
-    category_to_update = Category.name.ilike(f"%{name}%").one().update({'name':name})
-    # should pick out single category which is closest to input
-    category_to_update.name = name
-
-    updatedcategory = Category(name=name, id=id)
-    # db.session.add(updatedcategory)
-
-    db.session.commit()
-    flash(f'Category {name} edited')
     return redirect('/products')
 
 # reading and creating new posts in the database
@@ -301,45 +204,35 @@ def new_post():
 
 ## ********** DELETING POSTS, CATEGORIES AND PRODUCT ENTRIES FROM DB ************ ##
 #Deleting existing products
-@app.route('/delete_product', methods=['GET'])
-def display_delete_product():
-    form = RemoveProduct()
-    return render_template('delete_product.html', products=Product.query.all(),form=form)
 
-@app.route('/delete_product', methods=['POST'])
+@app.route('/delete_product', methods=['GET','POST'])
 def remove_product():
     form = RemoveProduct()
 
-    if not form.validate_on_submit():
-        return render_template('delete_product.html', form=form)
+    if (request.method == 'GET'):
+        return render_template('delete_product.html', products=Product.query.all(),form=form)
 
-    # get prod. name submitted in form
-    name = request.form.get("name")
-    print(name)
+    else:
+        if not form.validate_on_submit():
+            return render_template('delete_product.html', form=form)
 
-    category = request.form.get("category")
+        # get prod. name submitted in form
+        name = request.form.get("name")
+        print(name)
 
-    # querying the database for the same product name
-    if not Product.query.filter(Product.name == name).count():
-        flash(f'Product "{name}" does not exist')
-        return render_template('delete_product.html', form=form)
+        # querying the database for the same product name
+        if not Product.query.filter(Product.name == name).count():
+            flash(f'Product "{name}" does not exist')
+            return render_template('delete_product.html', form=form)
 
-    # joining tables together
-    prod_cat_join = Product.query.join(Product.category_id == Category.id)
-    # filtering by user submission
-    matching_prod = prod_cat_join.filter(Product.name == name, Category.name == category).one()
-
-    #prod = Product.query.filter(Product.name == name).first()
-    #print(prod)
-    
-    # deleting from database
-    db.session.delete(matching_prod)
-    db.session.commit()
-    
-    print("product deleted")
-
-    flash(f'Product "{name}" deleted')
-    return redirect ('/products')
+        prod = Product.query.filter(Product.name == name).one()
+        
+        # deleting from database
+        db.session.delete(prod)
+        db.session.commit()
+        
+        flash(f'Product "{name}" deleted')
+        return redirect ('/products')
 
 
 # Deleting existing categories
@@ -350,8 +243,8 @@ def remove_category():
 
     if (request.method == 'GET'):
         return render_template('delete_category.html', categories=Category.query.all(),form=form)
-    else:
 
+    else:
         if not form.validate_on_submit():
             return render_template('delete_category.html', form=form)
         
@@ -361,7 +254,7 @@ def remove_category():
             flash(f'Category "{name}" does not exist')
             return render_template('delete_category.html', form=form)
 
-        category = Category.query.filter(Category.name == name).first()       # finding the first thing that 
+        category = Category.query.filter(Category.name == name).first()       # finding the first thing matching category name
 
         db.session.delete(category)
         db.session.commit()
@@ -378,9 +271,9 @@ def remove_post():
     if not form.validate_on_submit():
         return render_template('delete_post.html', form=form)
     
-    title = request.form.get("title")                                       # string that the user passes through
+    title = request.form.get("title")                           # string that the user passes through
 
-    post = Post.query.filter(Post.title == title).first()       # finding the first thing that 
+    post = Post.query.filter(Post.title == title).first()       # finding the first post/row with matching title
 
     db.session.delete(post)
     db.session.commit()
@@ -407,3 +300,64 @@ def search():
         searched_product = request.form.get('name')
         products = Product.query.filter(Product.name.ilike(f"%{searched_product}%")).all()
         return jsonify([product.as_dict() for product in products])
+
+
+## ************* POSTMAN *******************##
+
+
+#Updating the product
+@app.route('/new_product_update', methods=['PUT'])
+def update(): 
+    
+    # FOR READING DATA THROUGH POSTMAN
+    # will have to read inputs in JSON
+    request_data = request.get_json() 
+    
+    name_to_update = None
+    price_to_update = None
+    product_des_to_update = None
+
+    #if the user has submitted all this to be updated
+    if request_data:
+      if 'name' in request_data:
+          name_to_update = request_data['name']
+
+      if 'price' in request_data:
+          price_to_update = int(request_data['price'])
+
+      if 'product_des' in request_data:
+          product_des_to_update = request_data['product_des']
+
+    result = db.session.query(Product).filter(Product.name == name_to_update).count()
+    if result < 1:
+        return f"{name_to_update} doesnt exist so update aborted"
+
+    prod = db.session.query(Product).filter(Product.name == name_to_update)
+    try:
+        prod = prod.update(                                                  # reassignment of updated product
+            {
+                "name": name_to_update,
+                "price": price_to_update,
+                "product_des": product_des_to_update
+            }, synchronize_session = False
+        )
+    except Exception as exc:
+        return(f"Error: {exc}")
+
+    db.session.commit()
+    flash(f'Product {name_to_update} edited')
+
+    return(f'{name_to_update} has been updated')
+    # return redirect('/products')
+
+
+@app.route('/allproducts', methods=['GET'])
+def showproducts():
+    products = Product.query.all()
+    return jsonify([product.as_dict() for product in products])
+
+# @app.route('/users')
+# def list_users():
+#         for user in User.query.all():
+#             print(user)
+#         return "users :)"

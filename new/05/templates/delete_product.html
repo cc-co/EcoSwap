@@ -5,13 +5,6 @@
     <form action="./delete_product" method="POST" novalidate>
         {{ form.hidden_tag() }}
         <p>
-            {{ form.category.label }}<br>
-            {{ form.category(size=32) }}
-            {% for error in form.category.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
             {{ form.name.label }}<br>
             {{ form.name(size=32) }}
             {% for error in form.name.errors %}
