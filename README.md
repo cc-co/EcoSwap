@@ -1,3 +1,0 @@
-# EcoSwap
-
-# removed env
