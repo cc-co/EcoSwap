@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate                   # alembic
+from flask_migrate import Migrate                   # alembic - database migration tool
 from flask_admin import Admin                       # admin
 from flask_admin.contrib.sqla import ModelView      # admin
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required

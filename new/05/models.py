@@ -54,8 +54,8 @@ class User(UserMixin, db.Model):                                        # UserMi
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-@login.user_loader
-def load_user(id):
+@login.user_loader                                                  # user_loader sets callback for reloading a user from session
+def load_user(id):                                                  # can be called to load user given id
     return User.query.get(int(id))
 
 # class Search_result(db.Model):
