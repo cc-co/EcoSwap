@@ -6,7 +6,7 @@ Flask, sqlalchemy, sqlite
 
 PLEASE READ
 
-The main branch has the version of the code that covers everything we have done, however there are parts that require tweaking (updating using PUT, the search results in models etc). You can reference the code in this branch if you would prefer. Most things that need tweaking are removed here and there are more annotations to help understand the code.
+The main branch has the version of the code that covers everything (that works) we have done. Most things that need tweaking are removed here and there are more annotations to help understand the code. If you have extra time, feel free to contact any one of us if you would like to see the previous extra code. See below for the main details about this project
 
 Main Features
 1.	Dropdown
