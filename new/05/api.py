@@ -1,5 +1,5 @@
 from flask import Blueprint, request, abort, jsonify
-import sqlalchemy.orm                       # ajax
+import sqlalchemy.orm                       
 
 from models import Category, Product
 
