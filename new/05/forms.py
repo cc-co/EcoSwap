@@ -27,26 +27,8 @@ class LoginForm(FlaskForm):
     remember=BooleanField('Remember me')
     submit=SubmitField('Login')
 
-class UpdateProduct(FlaskForm):
-    name=StringField('Product Name', validators=[DataRequired()])
-    price=IntegerField('Price (£)')
-    category=StringField('Category')
-    product_des=StringField('Product Description')
-
-    new_name=StringField('New product name')
-    new_price=IntegerField('New price (£)')
-    new_category=StringField('New category')
-    new_prod_des=StringField('New description')
-
-    submit = SubmitField('Submit')
-
-# class UpdateCategoryForm(FlaskForm):
-#     name=StringField('Category')
-#     submit = SubmitField('Submit')
-
 class RemoveProduct(FlaskForm):
     name=StringField('Product Name', validators=[DataRequired()])
-    category=StringField('Category')
     submit = SubmitField('Delete')
     
 class RemoveCategory(FlaskForm):

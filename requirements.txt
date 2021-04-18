@@ -4,7 +4,3 @@ Flask-SQLAlchemy
 Flask-Migrate
 flask-wtf
 flask-admin
-
-flask-login
-bs4
-
